@@ -1,0 +1,3 @@
+[submodule "texfiles"]
+	path = texfiles
+	url = git@dev.word-ac.net:latex-word-cls

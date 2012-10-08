@@ -1,0 +1,14 @@
+LATEX = platex --interaction=nonstopmode --kanji=utf8
+DVIPDFM = dvipdfmx
+
+DVIPSFLAGS = -t jisb5 -P pdf
+DVIPDFMFLAGS = -p jisb5
+TEXDEPS = word.cls
+
+word.cls : ../../texfiles/word.cls
+	cp ../../texfiles/word.cls word.cls
+
+LaTeXDocument(main, main)
+
+.DEFAULT : main.pdf
+
