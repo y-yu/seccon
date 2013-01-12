@@ -3,10 +3,16 @@ DVIPDFM = dvipdfmx
 
 DVIPSFLAGS = -t jisb5 -P pdf
 DVIPDFMFLAGS = -p jisb5
-TEXDEPS = word.cls
+TEXDEPS = word.cls word.clo default-style.sty
 
 word.cls : ../../texfiles/word.cls
-	cp ../../texfiles/word.cls word.cls
+	cp $< $@
+
+word.clo : ../../texfiles/word.clo
+	cp $< $@
+
+default-style.sty : ../../texfiles/default-style.sty
+	cp $< $@
 
 LaTeXDocument(main, main)
 
