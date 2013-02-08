@@ -1,0 +1,36 @@
+.PHONY: clean
+
+PDFLATEX = xelatex --interaction=nonstopmode --kanji=utf8
+USEPDFLATEX=true
+
+dirs = $(FindDirs ./sections/)
+TEXDEPS = $(DepsUpdate $(dirs)) xword.cls main.tex my-style.sty
+
+clean :
+	rm -r *.aux *.dvi *.fls *.log body.tex xword.cls default-style.sty
+	touch body.tex
+
+xword.cls : ../../texfiles/xword.cls
+	cp $< $@
+
+body.tex : :value: $(DepsUpdate $(dirs))
+	section
+		fp = $(fopen $@, w)
+		foreach(dir, $(dirs))
+			fprintln($(fp), \section{})
+			foreach(zero, $(filter %0.tex, $(set $(ls $(dir)))))
+				fprintln($(fp), \input{$(zero)})
+			texs = $(filter-out %0.tex, $(filter %.tex, $(set $(ls $(dir)))))
+			if $(gt $(length $(texs)), 0)
+				fprintln($(fp), \begin{multicols*}{2})
+			foreach(file, $(texs))
+				fprintln($(fp), \subsection{})
+				fprintln($(fp), \input{$(file)})
+			if $(gt $(length $(texs)), 0)
+				fprintln($(fp), \end{multicols*})
+
+
+LaTeXDocument(main, main)
+
+.DEFAULT: main.pdf
+

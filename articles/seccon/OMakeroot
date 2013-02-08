@@ -1,0 +1,18 @@
+open build/LaTeX
+
+DefineCommandVars()
+
+FindDirs(dir) =
+	d = $(set $(dirname $(ls $(dir)*)))
+	
+	return $(d)
+
+DepsUpdate(dirs) = 
+	deps = 
+		foreach (dir, $(dirs))
+			value $(filter %.tex, $(set $(ls $(dir))))
+	
+	return $(deps)
+
+.SUBDIRS: .
+

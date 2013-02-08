@@ -1,0 +1,82 @@
+\documentclass[draft]{xword}
+\usepackage{zxjatype}
+\usepackage{fontspec}
+\usepackage[hiragino-dx, scale=0.955]{zxjafont}
+\usepackage{type1cm}
+\usepackage{fancybox}
+\usepackage{layouts}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage[obeyspaces]{url}
+\usepackage{xltxtra}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{my-style}
+
+\setmainfont[Ligatures=TeX]{Times New Roman}
+
+\fontspec[Mapping=tex-text, Ligatures={Common, Rare, Historic}]{Hoefler Text}
+\newfontfamily\hoeflaer[Mapping=tex-text]{Hoefler Text}
+
+\def\pLaTeXe{p\LaTeXe}
+
+\def\makereversebox#1{%
+	\leavevmode%
+	{\setlength{\fboxsep}{.4pt}%
+	\setbox0\hbox{%
+		\colorbox{black}{\textcolor{white}{#1}}}%
+		\hbox{%
+			\hbox{%
+				\vbox{%
+					\hrule height \fboxrule\vskip-\fboxrule%
+					\hbox{%
+						\vrule width \fboxrule\hskip-\fboxrule%
+						\box0%
+						\hskip-\fboxrule%
+					\vrule width \fboxrule}
+					\vskip-\fboxrule}}}}}
+
+\def\reverse#1{%
+	\makereversebox{#1}}
+
+\makeatletter
+
+\newcommand{\rotate}[2][first=-40, last=40]{
+	\chgrand[#1]
+	\@tfor\letter:=#2\do{%
+			\expandafter\rand\rotatebox[origin=c]{\therand}{\letter}}}
+
+\makeatother
+
+\def\WORD{%
+	{\hoeflaer W\reverse{\bfseries\hoeflaer O}RD}}
+
+\title{WORD -24 Edition-, 2012}
+\author{吉村　優}
+\subtitle{\hoeflaer SECCON CTF 2}
+
+\begin{document}
+
+\chapter{\hoeflaer \reverse{S}ECCON \reverse{C}TF 2}
+
+\makeatletter%
+\newenvironment{screen}%
+{%
+	\vspace{2\Cht}
+	\setlength\@tempdima\columnwidth%
+	\addtolength\@tempdima{-15pt}%
+	\ovalbox\bgroup\begin{minipage}{\@tempdima}}%
+{\end{minipage}\egroup\vspace{2\Cht}}
+\makeatother
+
+\begin{center}
+\shadowbox{\small%
+	特に脚注がなければ、
+	この記事に登場する人物、団体名、企画などは実在するものです。
+}
+\end{center}
+
+\input{./body.tex}
+
+\end{document}

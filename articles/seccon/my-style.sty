@@ -1,0 +1,66 @@
+% author and subtitle setting api
+\def\authormark#1{%
+	\gdef\@authormark#1}
+
+\def\subtitle#1{%
+	\gdef\@subtitle{#1}}
+
+% footnote setting
+\interfootnotelinepenalty=10000
+
+% underbar
+\renewcommand{\_}{{\tt\symbol{95}}}
+
+% default 
+\def\@authormark{文　編集部}
+\def\@makefnmark{\raise.85pt\hbox{*}\textsuperscript{\@thefnmark}\hskip-.01\Cwd}
+
+\newfontfamily\vhiragino[Vertical=RotatedGlyphs,CharacterWidth=Full]{ヒラギノ明朝 Pro W3}
+
+\def\tate#1{%
+	\rotatebox[origin=c]{-90}{\vhiragino #1}}
+
+% the section format
+\def\@seccntformat#1{% #1: <counter name>
+   \@nameuse{@seccnt@prefix@#1}%
+   \@nameuse{@the@#1@style}%
+   \@nameuse{@seccnt@postfix@#1}}%
+
+\def\@the@section@style{\thesection}
+\def\@the@subsection@style{\thesubsection \hspace \Cwd}
+\def\@the@subsubsection@style{\thesubsubsection \hspace \Cwd}
+
+\def\@seccnt@prefix@section{%
+	\noindent%
+	第\hskip.5\Cwd}
+
+\def\@seccnt@postfix@section{\hskip.5\Cwd 章 \hskip.5\Cwd}
+
+\def\@seccnt@prefix@subsection{%
+	\noindent%
+	%\vrule height 3mm width .25mm depth 1mm%
+	%\hskip .1\Cwd
+	%\vrule height 3mm width .25mm depth 1mm%
+	%\hskip .5\Cwd
+}
+\def\@seccnt@postfix@subsection{}
+
+\def\@seccnt@prefix@subsubsection{%
+	\noindent%
+	%\vrule height 3mm depth 1mm%
+	%\hskip .1\Cwd
+	%\vrule height 3mm depth 1mm%
+	%\hskip .1\Cwd
+	%\vrule height 3mm depth 1mm%
+	%\hskip .5\Cwd
+}
+\def\@seccnt@postfix@subsubsection{}
+
+% section format
+\def\@seccnt@head@prefix@section{}%
+\def\@seccnt@head@postfix@section{}
+\def\@seccnt@head@prefix@subsection{}
+\def\@seccnt@head@postfix@subsection{}
+\def\@seccnt@head@prefix@subsubsection{}
+\def\@seccnt@head@prefix@subsubsection{}
+\def\@seccnt@head@postfix@subsubsection{}
