@@ -17,6 +17,13 @@
 
 \newfontfamily\vhiragino[Vertical=RotatedGlyphs,CharacterWidth=Full]{ヒラギノ明朝 Pro W3}
 
+\newenvironment{ruler}{%
+	\setvruler[15pt][1][1][1][0][35pt][35pt][0pt][\textheight]
+}{%
+	\newpage
+	\unsetvruler
+}
+
 \def\tate#1{%
 	\rotatebox[origin=c]{-90}{\vhiragino #1}}
 

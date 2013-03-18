@@ -1,0 +1,31 @@
+<HTML>
+<HEAD>
+<TITLE>Message Form</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+</HEAD>
+<BODY>
+<H1>Message Form</H1>
+<FORM ACTION="/cgi-bin/message.cgi" METHOD="POST">
+<p>
+Your Name:<BR>
+<INPUT TYPE=text NAME="name"  SIZE=30><P>
+</p>
+<p>
+Mail address<BR>
+<INPUT TYPE=text NAME="email" SIZE=30><P>
+</p>
+<p>
+Comment To:<BR>
+<select name="mail_to">
+  <option value="tech">Tech Support</option>
+  <option value="support">Administrator</option>
+  <option value="customer">Customer Support</option>
+  <option value="other">Other Support</option>
+<!-----  <option value="maintain">Maintainance</option> ----->
+</select>
+</p>
+Comments:<BR>
+<TEXTAREA NAME="comments" ROWS=6 COLS=50></TEXTAREA><P>
+<INPUT TYPE="submit" VALUE="Submit"> <INPUT type="reset" value="Reset"></FORM>
+</BODY></HTML>
+

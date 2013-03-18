@@ -1,0 +1,227 @@
+\Mercuryを占拠してからしばらく経ち、
+その間にあらゆる作業が自動化されたため、
+もはや俺がやることはなくなった。
+新たな問題\Uranusが追加されたが、これはネットワーク系の問題で俺が出る幕はなさそうだ。
+現在はおーぴー達が\Uranusを目指して出陣した。
+
+そうしている間に新たなWeb系の問題が出現した。
+\Marsという名前がついたその問題は、
+\Mercuryと同様に\url{http://10.0.2.5/FLAG}というURLだけが示されており、
+アクセスすると``\ctt{a}''とだけ書かれたテキストファイル。
+これは何か意味があってこうしているのか、
+または何のミスでこうなってしまったのかは分からない。
+とにかくこんなファイルを見ていても仕方がないので、
+\Mercuryと同様に\url{http://10.0.2.5/}へアクセスする。
+``\ctt{here}''というリンクのみが書かれたWebページが出現したので、
+とりあえずそれをクリックすると、\url{http://10.0.2.5/message.html}というURLへ飛ばされた。
+「Message Form」と太字で書かれたそのサイトには、
+
+\begin{itemize}
+	\item \ctt{Your Name}
+	\item \ctt{Mail address}
+	\item \ctt{Comment To}
+	\item \ctt{Comments}
+\end{itemize}
+
+という四つの入力フォームがある。
+そのうち\ctt{Comment To}は選択式になっており、
+
+\begin{itemize}
+	\item \ctt{Tech Support}
+	\item \ctt{Administrator}
+	\item \ctt{Customer Support}
+	\item \ctt{Other Support}
+\end{itemize}
+
+から選ぶ形になっている。
+
+とりあえず、全てを適当に入力して送信する。
+
+10秒か20秒くらい経ってから、次のようなページがやってくる。
+
+\begin{itembox}[c]{\textbf{Message Content:}}
+
+Sent Your Comment. ThankYou!
+
+\underline{return}. 
+\end{itembox}
+
+とりあえずソースでも見るか。
+
+\lstinputlisting[style=html]{src/2/message.cgi}
+
+まあ、これはたぶんメールの送信フォームだろう。
+ページ遷移に死ぬ程時間がかかっていたのは、
+恐らく\ctt{sendmail}か何かの外部プログラムを使ったためだろう。
+となると、\Marsはまず間違いなくOSコマンドインジェクションか、メールヘッダ汚染。
+とりあえず、送信フォームのソースを調べるか。
+
+\lstinputlisting[style=html]{src/2/message.html}
+
+うーん、このソースコード、まずは19行目だが、
+
+\begin{lstlisting}[style=html, firstnumber=19]
+<select name="mail_to">
+\end{lstlisting}
+
+となっていることからみて、
+やはり間違えなくこれはメールを送信するWebアプリケーションだろう。
+この\ctt{message.html}、8行目の\ctt{form}タグで\ctt{action}を次のようにしている。
+
+\begin{lstlisting}[style=html, firstnumber=8]
+<FORM ACTION="/cgi-bin/message.cgi" ......
+\end{lstlisting}
+
+送信先のプログラムが拡張子\ctt{.cgi}であること、
+さらには\ctt{cgi-bin}という伝統的なパスにあることを考えても、
+この\ctt{message.cgi}はPerlで書かれたプログラムである可能性が高い。
+そういう場合、たぶん\ctt{message.cgi}はこんな感じ。
+
+\lstinputlisting[style=perl]{src/2/mes_guess1.cgi}
+
+つまり、\ctt{mail\_to}クエリに何か、例えば次のようなものを差し込む。
+
+\begin{lstlisting}
+hoge@hoge.jp; ls
+\end{lstlisting}
+
+すると、俺の考えた\ctt{message.cgi}においては9行目、
+\ctt{sendmail}に渡す一連のコマンドが次のようになる。
+
+\begin{lstlisting}
+/usr/sbin/sendmail -t hoge@hoge.jp; ls
+\end{lstlisting}
+
+セミコロンは複数のコマンドを区切る働きがあるので、
+この例では\ctt{sendmail}と意図しない\ctt{ls}が同時に実行されることになる。
+しかし、今回はそう簡単に物事が進みそうにない。
+何故なら肝心要の\ctt{mail\_to}の選択肢は、
+
+\begin{lstlisting}[style=html, firstnumber=20]
+<option value="tech">Tech Support</option>
+<option value="support">Administrator</option>
+<option value="customer">Customer Support</option>
+<option value="other">Other Support</option>
+<!-----  <option value="maintain">Maintainance</option> ----->
+\end{lstlisting}
+
+となっている。
+この不気味にコメントアウトされた\ctt{Maintainance}というのが気になるが、
+それよりも問題なのはこいつらの\ctt{value}だ。
+
+\begin{itemize}
+	\item \ctt{tech}
+	\item \ctt{support}
+	\item \ctt{customer}
+	\item \ctt{other}
+	\item \ctt{maintain}
+\end{itemize}
+
+どいつもこいつもメールアドレスには見えない故、
+これは内部にテーブルか何かを持っていると考えるのが妥当だ。
+つまり\ctt{message.cgi}は、
+
+\lstinputlisting[style=perl, firstnumber=6]{src/2/mes_guess2.cgi}
+
+という感じで\ctt{\$mail\_to}を決定している可能性が高い。
+よって、これでは\ctt{mail\_to}にOSコマンドを仕込むのは不可能だ。
+
+となると……次はメールヘッダ汚染だ、が……。
+それはそれで問題がある。
+というのもこれは最終的な目標がFLAGファイルへの書き込み故、
+メールヘッダに何か汚染を仕掛けたところでFLAGへ到達出来ないのではないか。
+また、メールヘッダ汚染は例えば、
+
+\begin{lstlisting}[style=perl]
+my $subject = $q->param('subject');
+
+print $mh "Subject: $subject\n\n";
+\end{lstlisting}
+
+などとしてあるプログラムに対して、
+\ctt{\$subject}に、
+
+\begin{lstlisting}[mathescape]
+hogehoge%0D%0A$\normalfont\footnotemark$Bcc: hoge@some.addr
+\end{lstlisting}
+\footnotetext{\ctt{\%0D}、\ctt{\%0A}はそれぞれ\textbackslash\ctt{r}と\textbackslash\ctt{n}であり、改行をURLエンコードしたもの。}
+
+といったもの注入することで、
+
+\begin{lstlisting}
+Subject: hogehoge
+Bcc: hoge@some.addr
+
+
+\end{lstlisting}
+
+という感じにメールの送信先などを改竄する攻撃だ。
+現実の世界であれば、\ctt{message.cgi}ようなメールを送信するプログラムは、
+確実にインターネットへ接続されている。
+しかし\Marsは競技という性質上、
+問題のターゲットとなるサーバーが外部のインターネットに接続されているのか分からない。
+というか、競技とはいえ、脆弱性のあるシステムをあえて作っているわけで、
+そういうシステムを外部に公開するというのは考えにくいのではないか。
+つまり競技という性質上の兼ね合いからも、メールヘッダ汚染は考えにくい。
+
+が、他にまともな策もない。
+競技の性質を勝手に決めつけてしまうのも良くない。
+とりあえず試してみるか。
+
+とは言うものの、メールヘッダ汚染にはまだ障壁がある。
+この\ctt{message.cgi}がどのようにメールヘッダを生成するのかを推測する必要がある。
+おさらいすると、まずこの\ctt{message.cgi}が受け取るクエリは、
+
+\begin{itemize}
+	\item \ctt{Your Name (name)}
+	\item \ctt{Mail address (email)}
+	\item \ctt{Comment To (mail\_to)}
+	\item \ctt{Comments (Comments)}
+\end{itemize}
+
+の四つ。
+括弧内が\ctt{input}タグや\ctt{select}タグで指定されている\ctt{name}だ。
+
+この中で、
+\ctt{mail\_to}は先ほどプログラムの中でテーブルを使って決定しているという推測がなされたので、
+ここに何を仕込んでも意味はない。
+次に明らかに除外出来るのは\ctt{comments}だ。
+これはメールヘッダの後に来る本文へ書き出される可能性が高い。
+残るは\ctt{name}と{email}だが、俺の読みでは多分\ctt{message.cgi}はこんな感じ。
+
+\lstinputlisting[style=perl]{src/2/mes_guess3.cgi}
+
+俺もどこかの企業か何かが作ったメール送信フォームを使ったことがあるが、
+こういう場合、大抵先方からは入力した自分のメールアドレス宛に返信が来る。
+ならばこのようにユーザが入力したメールアドレスをメールヘッダの\ctt{From}に書くことで、
+メールを受けとった人間は、メールクライアントの返信機能で返事を出せるから便利、
+ということになっていてもおかしくはない。
+まあ、ひょっとしたら\ctt{name}と\ctt{email}を結合して、
+
+\begin{lstlisting}[style=perl, firstnumber=11]
+print $mh "From: $name<$email>\n";
+\end{lstlisting}
+
+となっている可能性もある。
+しかし後ろに何があっても同じこと。
+改行してしまえば問題はない。
+いずれの場合であったとしても\ctt{email}に汚染を仕込めば良いということだ。
+ということで、\ctt{email}に次のようなものを仕込む。
+
+\begin{lstlisting}[mathescape]
+hoge%0D%0ABcc: yuu@coins.tsukuba.ac.jp$\normalfont\footnotemark$
+\end{lstlisting}
+\footnotetext{このメールアドレスは架空のものです。}
+
+これでCOINSのメールアドレスにメールが届けば一つ光明が見えるというものだが……。
+
+% \Uranusについては、何もせずに傍観している間に、
+% \ZxZや\wasamusumeなどがキーワード二つを取得し我々に迫るも、
+% おーぴー達がキーワードを二つとってまた引き離す。
+
+
+% vimexec: let g:tex_no_math = 0
+% vimexec: syntax off
+% vimexec: syntax on
+% vimexec: source ~/.gvimrc
+

@@ -4,7 +4,7 @@ PDFLATEX = xelatex --interaction=nonstopmode --kanji=utf8
 USEPDFLATEX=true
 
 dirs = $(FindDirs ./sections/)
-TEXDEPS = $(DepsUpdate $(dirs)) xword.cls main.tex my-style.sty
+TEXDEPS = $(DepsUpdate $(dirs)) xword.cls main.tex sty/my-style.sty sty/terms.sty
 
 clean :
 	rm -r *.aux *.dvi *.fls *.log body.tex xword.cls default-style.sty
@@ -22,12 +22,12 @@ body.tex : :value: $(DepsUpdate $(dirs))
 				fprintln($(fp), \input{$(zero)})
 			texs = $(filter-out %0.tex, $(filter %.tex, $(set $(ls $(dir)))))
 			if $(gt $(length $(texs)), 0)
-				fprintln($(fp), \begin{multicols*}{2})
+				fprintln($(fp), \begin{multicols}{2})
 			foreach(file, $(texs))
 				fprintln($(fp), \subsection{})
 				fprintln($(fp), \input{$(file)})
 			if $(gt $(length $(texs)), 0)
-				fprintln($(fp), \end{multicols*})
+				fprintln($(fp), \end{multicols})
 
 
 LaTeXDocument(main, main)

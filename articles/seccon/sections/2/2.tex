@@ -1,0 +1,69 @@
+ひたすら\upkeyと\keytop{Enter}キーを交互に連打。
+そしておーぴー達が\MercuryのFLAGに書き込むために何かの手を打っているはずだ。
+FLAGは先程\ctt{gomi.php}で調べたところ、\ctt{stage5}なる権限でのみ書き込めるようだ。
+これはつくば大会であったような、\ctt{sudoers}を読み取るようなパターンが想像されるが、
+今俺がそれを調べることは出来ない。
+今は大量にアップロードされるゴミファイルを駆逐せねばならない。
+
+会場に、サイレン音が響く。
+キーワードを取得した時にもサイレンが鳴るのだが、
+それより長いサイレン音。
+\urandomが\MercuryのFLAGにフラッグワードを書き込んだことを示す。
+
+よし。
+流石はおーぴー。
+ベガスで戦っただけあって、強い。
+
+そして、めいすが書いていたシェルスクリプトも完成した。
+\ctt{sleep}と\ctt{rm}を無限ループする単純なプログラムだが、
+相手からしたらそう簡単には防げまい。
+そうだ、\ctt{authorized\_keys}を確認しておくか。
+
+\end{multicols}
+
+\lstinputlisting{src/2/authorized_keys2}
+
+\begin{multicols}{2}
+
+Fuck！明らかに増えてる……！
+%くそったれ、俺たちの\ctt{authorized\_keys}が汚染された。
+やはり俺の妨害工作をする前に、
+一定数の人間が\ctt{authorized\_keys}まで到達してしまったのか。
+いや、妨害工作とはいえ先程までは俺が手動で\ctt{rm}していたに過ぎん。
+つまり、俺が削除する間を突いてスクリプトを実行したという可能性もある。
+
+「吉村くん」
+
+おーぴーから話しかけられる。
+
+「おーぴー、\ctt{authorized\_keys}が増えてる。
+どっかのチームが捩じ込んでる」
+
+「ログインしている敵チームの人を\ctt{kill}するから、\ctt{\$BASHPID}を教えて」
+
+「ええと、どうすれば？」
+
+「\ctt{echo \$BASHPID}でいい」
+
+なるほど、既に策は考えてあるのか。
+ならば直ちに。
+
+\begin{lstlisting}
+[stage4@localhost .ssh]$ echo $BASHPID
+2011
+\end{lstlisting}
+
+「俺の\ctt{\$BASHPID}は\ctt{2011}だ」
+
+「了解」
+
+おーぴーはメンバー全員の\ctt{\$BASHPID}を集め、
+\ctt{pkill}でそれら以外のプロセスを殺し始める。
+まあよく分からないが、たぶんこれで我々以外の人間が\ctt{authorized\_keys}に鍵を登録出来たとしても、
+SSHでログインした瞬間に殺されてしまうんだ。
+とてもFLAGを汚染するなんて出来ないだろう。
+
+% vimexec: let g:tex_no_math = 0
+% vimexec: syntax off
+% vimexec: syntax on
+% vimexec: source ~/.gvimrc

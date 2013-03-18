@@ -1,0 +1,11 @@
+total 32
+drwxr-xr-x. 4 root   root   4096 Feb 13 15:09 .
+drwxr-xr-x. 7 root   root   4096 Feb 13 12:02 ..
+-rw-r--r--  1 stage5 stage5    0 Feb 13 15:09 FLAG
+-rw-r--r--. 1 root   root     16 Feb 12 16:39 eng.txt
+-rw-r--r--. 1 root   root   1305 Feb 12 17:50 index.html
+-rw-r--r--. 1 root   root     31 Feb 12 17:10 jpn.txt
+-rwxr-xr-x. 1 root   root    872 Feb 14 10:10 stage1.cgi
+drwxr-xr-x. 2 root   root   4096 Feb 14 10:28 stage2
+drwxr-xr-x. 3 root   root   4096 Feb 13 14:28 stage3xYz
+drwxr-xr-x. 3 root   root   4096 Feb 13 14:28 stage3xYz

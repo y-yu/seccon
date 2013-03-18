@@ -1,25 +1,91 @@
 \documentclass[draft]{xword}
-\usepackage{zxjatype}
+\usepackage[default]{zxjatype}
 \usepackage{fontspec}
 \usepackage[hiragino-dx, scale=0.955]{zxjafont}
 \usepackage{type1cm}
+\usepackage[final]{listings}
 \usepackage{fancybox}
 \usepackage{layouts}
 \usepackage{enumerate}
 \usepackage{float}
+\usepackage{vruler}
 \usepackage{multicol}
 \usepackage[obeyspaces]{url}
-\usepackage{xltxtra}
 \usepackage{graphicx}
 \usepackage{xcolor}
-\usepackage{my-style}
+\usepackage{dirtree}
+\usepackage{xltxtra}
+\usepackage{sty/bxokumacro}
+\usepackage{sty/bxascmac}
+\usepackage{sty/my-style}
+\usepackage{sty/terms}
+
+\setjafontscale{0.955}
+
+%\xeCJKsetup{KaiMingPunct+={？}}
+
+\xeCJKsetwidth{！？}{1.5em}
+\xeCJKDeclarePunctStyle{ mine }
+{
+	fixed-punct-ratio       = 1 ,
+	fixed-margin-width      = 0 pt ,
+	mixed-margin-width      = \maxdimen ,
+	mixed-margin-ratio      = 1,
+	middle-margin-width     = \maxdimen ,
+	middle-margin-ratio     = 1,
+	add-min-bound-to-margin = true ,
+	min-bound-to-kerning    = true ,
+	kerning-margin-minimum  = 0.5em,
+}
+\xeCJKsetup{PunctStyle=mine}
 
 \setmainfont[Ligatures=TeX]{Times New Roman}
 
 \fontspec[Mapping=tex-text, Ligatures={Common, Rare, Historic}]{Hoefler Text}
 \newfontfamily\hoeflaer[Mapping=tex-text]{Hoefler Text}
 
-\def\pLaTeXe{p\LaTeXe}
+\lstset{
+	basicstyle=\footnotesize\tt,
+	keywordstyle=\footnotesize\bf,
+	breaklines=true,
+	framerule=0pt,
+	frame=l
+	showstringspaces=false,
+	xleftmargin=12pt,
+	xrightmargin=1pt,
+	tabsize=2,
+	backgroundcolor={\color[gray]{.93}},
+	basewidth={0.57em, 0.52em},
+	lineskip=-0.42em
+}
+
+\lstdefinestyle{plain}{
+	numbers=left,
+	language=,
+	moredelim=[is][\it]{_}{_},
+}
+
+\lstdefinestyle{sh}{
+	numbers=left,
+	language=sh
+}
+
+\lstdefinestyle{php}{
+	numbers=left,
+	language=php,
+}
+
+\lstdefinestyle{perl}{
+	numbers=left,
+	firstnumber=1,
+	language=perl,
+}
+
+\lstdefinestyle{html}{
+	numbers=left,
+	firstnumber=1,
+	language=HTML,
+}
 
 \def\makereversebox#1{%
 	\leavevmode%
@@ -52,23 +118,16 @@
 \def\WORD{%
 	{\hoeflaer W\reverse{\bfseries\hoeflaer O}RD}}
 
+\def\ctt#1{{\tt\small#1}}
+
+
 \title{WORD -24 Edition-, 2012}
 \author{吉村　優}
-\subtitle{\hoeflaer SECCON CTF 2}
+\subtitle{{\SECCON} CTF 全国大会}
 
 \begin{document}
 
-\chapter{\hoeflaer \reverse{S}ECCON \reverse{C}TF 2}
-
-\makeatletter%
-\newenvironment{screen}%
-{%
-	\vspace{2\Cht}
-	\setlength\@tempdima\columnwidth%
-	\addtolength\@tempdima{-15pt}%
-	\ovalbox\bgroup\begin{minipage}{\@tempdima}}%
-{\end{minipage}\egroup\vspace{2\Cht}}
-\makeatother
+\chapter{\hoeflaer \reverse{S}ECCON \reverse{C}TF \lower.05em\hbox{\reverse{全}}国大会}
 
 \begin{center}
 \shadowbox{\small%
@@ -77,6 +136,8 @@
 }
 \end{center}
 
+%\begin{ruler}
 \input{./body.tex}
+%\end{ruler}
 
 \end{document}
