@@ -1,0 +1,169 @@
+\Jupiterの停止に伴ない、
+それまで全てのチームが書き続けていた\MercuryのFLAGが、
+\urandom、\ZxZ、\wasamusume、\mofupp、\MMA以外なくなる。
+やはり、\mofuppが他チームのフラッグワードを書いていたんだろう。
+
+しかし、その時に長いサイレン音が会場に響く。
+\Marsのフラッグに汚染が走った。
+書き込んだのは\ZxZ。
+
+旗の色は、移りにけりな徒に、我が身世にふる眺めせし間に。
+\urandomが天下無双を誇ったのが、もはや一炊の夢のごとく消え去ってしまった……。
+いや栄華が失なわれるのは真っ当なことだが、
+\Marsを失ったのは自身の不徳の致すところに他ならぬ。
+やはり昨日、ハルシオンを使ったのが不味かったのかもしれん。
+考えてみればあの時、時刻は既に今日だった。
+俺の盛運はもはや昨日の段階で失なわれており、
+今日はあらゆる選択に失敗するような日だったのかもしれん。
+
+またサイレンが鳴った。
+今度は短い。
+\ZxZが\Marsのキーワードをコミットした。
+
+どうっなっている？
+どうしてFLAGを取ってからのキーワードコミットなんだ？
+ちょっと待て、そういえば\MarsってSSHがあった……。
+SSHがこの\Marsにおける最終目標だとしたら、
+\ZxZは何も正々堂々と\ctt{message.cgi}を攻略したとは限らない。
+\Marsは入口があの\ctt{message.cgi}で、
+そこから最終的にSSHのログインパスワードを奪取する問題であったとしたら、
+総当たりか何かでSSHをこじ開ければよい。
+
+「吉村くん」
+
+めいすだ。
+
+「\ctt{sendmail}なんだけど、宛先にユーザー名を直接指定出来るみたい」
+
+なんだと、だったらテーブルは不要。
+
+\lstinputlisting[style=perl]{src/4/mes_guess4.cgi}
+
+この形！
+出来る、OSコマンドインジェクションが。
+だが……。
+
+サイレンが鳴って、\Marsのキーワードがもう一つコミットされる。
+したのは\ZxZ。
+
+完全に一手遅い。
+先ほどの推論で\ZxZはSSHをこじ開けた可能性もある。
+そうでなければどうしてFLAGを書いてからキーワードをコミットするんだ。
+仮に\ZxZが順当に\ctt{message.cgi}をハックしたとしても、
+\MarsのSSHがどこかの段階で使われているだろうから、
+既に\Marsの中を\ZxZの連中が跋扈している可能性が高い。
+ならば当然何かの策を講じてくるだろう。
+
+それでもOSコマンドインジェクションを試す以外にない。
+\ctt{mail\_to}にどんなOSコマンドインジェクションを入れるかだが、
+とりあえず通るかどうかのテストをしてみよう。
+
+\begin{lstlisting}
+hoge; ls
+\end{lstlisting}
+
+でどうだ。
+
+これで\ctt{ls}の結果が出るかどうか。
+
+\begin{itembox}[c]{\textbf{Message Content:}}
+Sent Your Comment. ThankYou!
+
+\underline{return}. 
+\end{itembox}
+
+駄目か……。
+標準出力に何か吐いても意味はなかろうから、ファイルに書き出した上でそれを見るしかあるまい。
+つまり、
+
+\begin{lstlisting}
+hoge; ls > gomi.txt
+\end{lstlisting}
+
+これでどうだ。
+
+\begin{itembox}[c]{\textbf{Message Content:}}
+Sent Your Comment. ThankYou!
+
+\underline{return}. 
+\end{itembox}
+
+後は\url{http://172.16.8.130/cgi-bin/gomi.txt}があればいいが。
+
+\begin{itembox}[c]{\textbf{Not Found}}
+
+The requested URL /cgi-bin/gomi.txt was not found on this server.
+\end{itembox}
+
+くっ、失敗か。
+二つの可能性が考えられる。
+一つは単純に\ctt{cgi-bin}のパーミッションが高くファイルを生成出来ないという可能性、
+もう一つは\ZxZが何かスクリプトを動かしていて、そいつが生成した\ctt{gomi.txt}を排除している可能性。
+ちくしょう！
+もしOSコマンドインジェクションという可能性を昨日の段階で気が付き試していれば、
+このような事になりはしなかった。
+少なくともパーミッションの問題か妨害工作かの判断は出来たはず。
+駄目だ、完全にしくじった。
+
+俺は\ctt{mail\_to}の中身がメールアドレスに見えないという理由で、
+早々にOSコマンドインジェクションを見限ってしまった。
+もしこれはないなと思っても、とりあえず試してさえいれば、
+もう少し有利な立場に立てはずを。
+
+しかし、どうして他のチームはここまで手まどっているのだろうか。
+俺みたいに皆メールヘッダ汚染に縛られているのだろうか。
+これだけ人間がいれば、
+一人くらいOSコマンドインジェクションを疑ったとしてもおかしくはないはずだが……。
+それともOSコマンドインジェクションも実は偽造で、
+本当の脆弱性はどこか別のところにあるという罠か。
+
+それにしても、\Marsはまるで濃霧の層だ。
+こちらの攻撃が外れているのか、
+それとも\ZxZが設置した盾に弾かれているのかも分からん。
+昨日\EDが\Mercuryの\ctt{stage3}でアップローダーに苦戦していた様子を眺めていたが、
+今度は俺が苦境。
+くそ、せめてキーワードの一つくらいは欲しいところ。
+なんとかならんものか。
+
+待てよ、そういえば先ほど放った文字列、
+URIエンコードしていなかったな。
+そういう問題もあるのかもしれない。
+
+\begin{lstlisting}
+$ perl -MURI::Escape -E 'say uri_escape("hoge; ls > gomi.txt")'
+hoge%3B%20ls%20%3E%20gomi.txt
+\end{lstlisting}
+
+よし、URIエンコードした方で試すか。
+Tamper Data\footnote{HTTPのヘッダやPOSTデータなどを閲覧したり変更出来るFirefoxのアドオン。}%
+にセット。
+これでどうだ。
+
+\begin{itembox}[c]{\textbf{Message Content:}}
+Sent Your Comment. ThankYou!
+
+\underline{return}. 
+\end{itembox}
+
+ここからの、
+\url{http://172.16.8.130/cgi-bin/gomi.txt}だが。
+
+\begin{itembox}[c]{\textbf{Not Found}}
+
+The requested URL /cgi-bin/gomi.txt was not found on this server.
+\end{itembox}
+
+ダメか、やはり\ZxZに殺されたのか。
+妨害なのか仕様なのか分からぬ疑心暗鬼。
+この手法が成功しているのか、妨害で失敗しているように見えるのか分からんというのは、
+俺の頭から次の策を考える力を奪う。
+昨日我々がSSHを切断する妨害工作をしていた時、他のチームはこんな心境で競技に挑んでいたとは。
+しかも800点ほど点差が開いているという絶望的な状況の中で、
+よくSSHの切断を妨害と決定し策を練られたものだ。
+力の差を見せつけられる。
+
+
+% vimexec: let g:tex_no_math = 0
+% vimexec: syntax off
+% vimexec: syntax on
+% vimexec: source ~/.gvimrc
