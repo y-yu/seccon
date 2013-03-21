@@ -40,7 +40,6 @@
 10秒か20秒くらい経ってから、次のようなページがやってくる。
 
 \begin{itembox}[c]{\textbf{Message Content:}}
-
 Sent Your Comment. ThankYou!
 
 \underline{return}. 
@@ -187,7 +186,7 @@ Bcc: hoge@some.addr
 ここに何を仕込んでも意味はない。
 次に明らかに除外出来るのは\ctt{comments}だ。
 これはメールヘッダの後に来る本文へ書き出される可能性が高い。
-残るは\ctt{name}と{email}だが、俺の読みでは多分\ctt{message.cgi}はこんな感じ。
+残るは\ctt{name}と\ctt{email}だが、俺の読みでは多分\ctt{message.cgi}はこんな感じ。
 
 \lstinputlisting[style=perl]{src/2/mes_guess3.cgi}
 
@@ -209,7 +208,7 @@ print $mh "From: $name<$email>\n";
 ということで、\ctt{email}に次のようなものを仕込む。
 
 \begin{lstlisting}[mathescape]
-hoge%0D%0ABcc: yuu@coins.tsukuba.ac.jp$\normalfont\footnotemark$
+hoge%0D%0ABcc: yuu@coins.tsukuba.ac.jp$\normalfont\footnotemark$%0D%0A
 \end{lstlisting}
 \footnotetext{このメールアドレスは架空のものです。}
 
