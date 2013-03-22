@@ -1,7 +1,10 @@
 .PHONY: clean
 
-PDFLATEX = xelatex --interaction=nonstopmode --kanji=utf8
-USEPDFLATEX=true
+LATEX = xelatex --interaction=nonstopmode -no-pdf
+DVIPDFM = xdvipdfmx
+
+# USEPDFLATEX=true
+DVIPDFMFLAGS = -d 5 -p jisb5
 
 dirs = $(FindDirs ./sections/)
 TEXDEPS = $(DepsUpdate $(dirs)) xword.cls main.tex sty/my-style.sty sty/terms.sty
@@ -29,6 +32,8 @@ body.tex : :value: $(DepsUpdate $(dirs))
 			if $(gt $(length $(texs)), 0)
 				fprintln($(fp), \end{multicols})
 
+main.dvi : main.xdv
+	cp $< $@
 
 LaTeXDocument(main, main)
 
