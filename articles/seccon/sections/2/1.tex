@@ -184,30 +184,35 @@ gomi.phpをアップロードしました。
 さて、とりあえず\ctt{stage3xYz}を\ctt{ls}してみるか。
 \url{http://10.2.0.3/stage3xYz/images/gomi.php?cmd=ls ../}を実行してみよう。
 
-\dirtree{%
-	.1 /.
-	.2 HINT1:\_Use\_SSH.
-	.2 HINT2:\_Append\_Only.
-	.2 images/.
-	.2 index.php.
-}
+\begin{lstlisting}
+HINT-1:_Use_SSH
+HINT-2:_Append_Only
+images
+index.php
+index.php
+\end{lstlisting}
 
 \ctt{HINT1:\_Use\_SSH}？なんだこれは？
 まあとりあえず、\ctt{FLAG}を見てみるか。
 
 \url{http://10.2.0.3/stage3xYz/images/gomi.php?cmd=ls ../../}へアクセス。
 
-\dirtree{%
-	.1 /.
-	.2 jpn.txt.
-	.2 eng.txt.
-	.2 stage1.cgi.
-	.2 stage2/.
-	.2 stage3xYz/.
-	.2 FLAG.
-}
+\begin{lstlisting}
+FLAG
+eng.txt
+index.html
+jpn.txt
+stage1.cgi
+stage2
+stage3xYz
+stage3xYz
+\end{lstlisting}
 
-これじゃ意味不明だな。
+なるほどね。
+最初に見えたApacheのファイル一覧みたいなものは、
+単に見た目をそっくりに偽装した\ctt{index.html}が置いてあっただけか。
+
+さて、FLAGのパーミッションは確認した方がいいな。
 \url{http://10.2.0.3/stage3xYz/images/gomi.php?cmd=ls -al ../../}だ。
 
 \lstinputlisting[xleftmargin=1pt, basicstyle=\fontsize{6pt}{15pt}\tt]{src/2/lsDocRoot.txt}
@@ -228,13 +233,13 @@ uid=502(stage4) gid=502(stage4) groups=502(stage4),0(root) uid=502(stage4) gid=5
 
 「おーぴー、\ctt{id}が\ctt{stage4}だ。\ctt{authorized\_keys}を------」
 
-そこまで言ったところで全てを察したおーぴーは直ちに作業に戻った。
+そこまで言ったところで全てを察したおーぴーは直ちに作業へと戻った。
 ならば俺も作業開始だ。
 \ctt{id}が\ctt{stage4}であるということは、
-\ctt{stage4}の\ctt{authorized\_keys}に俺の公開鍵を書き込めばそのまま\url{stage4@10.2.0.3}へSSHでログイン出来る可能性が高い。
+\ctt{stage4}の\ctt{authorized\_keys}に俺の公開鍵を書き込めば
+そのまま\url{stage4@10.2.0.3}へログイン出来る可能性が高い。
 
-まずは適当な鍵を生成せねば……。
-\ctt{ssh-keygen}だ。
+まずは適当な鍵を生成せねば。
 
 \begin{lstlisting}
 $ ssh-keygen -f ~/.ssh/id_rsa.gomi
@@ -262,7 +267,7 @@ tvHXpmM7818npSKGy0yeKaajNIEYQYKUGVYVDcLKWEFXY2utDd2wV3M2BRsEZZyu7jlBOqtfEeQbou3s
 $ ssh -i ~/.ssh/id_rsa.gomi stage4@10.0.2.3
 \end{lstlisting}
 
-とすればよい。
+とすればログイン出来るはず。
 
 \begin{lstlisting}
 Permission denied.
@@ -277,8 +282,8 @@ Permission denied.
 
 なんだと……。
 ということは、俺の書いた\ctt{authorized\_keys}が不正？
-\url{http://10.2.0.3/stage3xYz/images/gomi.php?cmd=cat /home/stage4/.ssh/authorized_keys}
-で中身を確認だ。
+とりあえず\url{http://10.2.0.3/stage3xYz/images/gomi.php?cmd=cat /home/stage4/.ssh/authorized_keys}
+で中身を確認するか。
 
 \end{multicols}
 
@@ -330,7 +335,7 @@ Stage4 Keyword: IcouldLoginWithSSHd
 \end{lstlisting}
 
 勝った。
-このキーワードは既におーぴーが書き込んだらしい。
+このキーワードは既におーぴーがコミットしたらしい。
 しかし謎なのは、
 
 「おーぴー、どうやって\ctt{authorized\_keys}に書き込んだ？」
@@ -338,11 +343,10 @@ Stage4 Keyword: IcouldLoginWithSSHd
 「Fiddler\footnote{プロクシのように振る舞うWebデバッガー。}を使った」
 
 なるほど。
-俺みたいに文字列を直接アドレスバーに入力するような、
-古典的な手法はもうダメってことだな。
+俺みたいに文字列を直接アドレスバーに入力するような古典的手法はもうダメってことだな。
 まあともかく、これで俺もサーバーの住人だ。
 
-しかし、ここに来てログインしているのは俺とおーぴーだけ。
+しかし、SSHでログインしているのは俺とおーぴーだけ。
 チームの全員でこのサーバーを調べた方が良いだろう。
 とりあえず、他のメンバーに手早く\ctt{gomi.php}の使い方を説明した。
 
@@ -361,8 +365,8 @@ Apacheの設定ファイルである\ctt{.htpasswd}なども閲覧出来る。
 おしろが言う。
 どういうことだ？
 とにかく調べてみるか。
-ドキュメントルートはどこだか不明だが、まあ恐らく
-\ctt{/var/www/}の下の何処か。
+ドキュメントルートはどこだか不明だが、
+まあ恐らく\ctt{/var/www/}の下の何処か。
 ここで\ctt{ls}を発砲。
 
 \begin{lstlisting}
@@ -371,7 +375,7 @@ Apacheの設定ファイルである\ctt{.htpasswd}なども閲覧出来る。
 DB  cgi-bin  error  html  icons
 \end{lstlisting}
 
-この中で可能性が最も高そうなのは\ctt{html}だ。
+この中でドキュメントルートである可能性が最も高そうなのは\ctt{html}だ。
 となると、\ctt{gomi.php}があるのは\ctt{html/stage3xYz/image/}ということだ。
 とりあえずそこで\ctt{ls}を撃つ。
 
@@ -382,7 +386,7 @@ gomi.php index.html a.php hogehoge.cgi key.png test.php gomi.php attack.php
 
 なんだこれは？
 俺がアップロードした覚えのないファイルが大量に……。
-おーぴーなどが適当にアップロードしたにしては、流石に多過ぎだ。
+おーぴーなどが適当にアップロードしたにしては流石に多過ぎだ。
 もしかして、これ、あらゆるチームが同じサーバーへ攻撃しているのか？
 ならば俺のやるべきことは、
 
@@ -402,13 +406,12 @@ index.html
 この\ctt{index.html}は大会側が用意したものだろうから、
 何か強いパーミッションで保護されているに違いない。
 それ以外のファイル、例えば\ctt{gomi.php}など、
-\ctt{stage4}の権限でなんとか出来るファイルについては壊滅だ。
+\ctt{stage4}の権限でなんとか出来るファイルについては全滅だ。
 
-敵チームがこのサーバーへログインするには、
-俺の置いたようなスクリプトを設置し、
+敵チームがこのサーバーへログインするには俺の置いたようなスクリプトを設置し、
 \ctt{authorized\_keys}へ公開鍵を書き込む以外にないだろう。
 だがここで俺が立て籠り、アップロードされたファイルをことごとく削除したら、
-当然敵チームが公開鍵\ctt{authorized\_keys}へ書き込むのは困難になるだろう。
+当然敵チームが公開鍵を\ctt{authorized\_keys}へ書き込むのは困難になるだろう。
 だからひたすら\ctt{rm -rf *}を連打だ。
 これで俺の置いた\ctt{gomi.php}も破滅したが、もはやあんなものは必要ない。
 少くとも俺とおーぴーの公開鍵が\ctt{authorized\_keys}に登録されている以上、
@@ -436,7 +439,8 @@ HZ41AoNUbHf7PKznv2cwSWP5z5MIfVvvoZsRmtxbVG4UEN0pA578uo8rIRq87z6MZ8LQ7usXweUsGuZr
 
 他のメンバーの公開鍵はおーぴーが処理したらしい。
 俺はめいすから削除する役割を代ってもらい、
-めいすにはこの作業をシェルスクリプトか何かで自動化してもらう。
+めいすにはこの作業をシェルスクリプトか何かで自動化してもらうことにした。
+そして残りのメンバーはFLAGへの書き込みを模索する。
 
 % vimexec: let g:tex_no_math = 0
 % vimexec: syntax off
