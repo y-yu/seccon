@@ -1,6 +1,8 @@
-さて、俺は直ちに問題サーバーへとアクセスした。
+運営の注意などが終わり、競技は開始された。
+
+俺は直ちに問題サーバーへとアクセスする。
 問題は\Mercuryというものが一問のみ。
-まあ、従来と同じように、時間の経過と共に問題が追加されてゆく形式なのであろう。
+まあ、従来と同じように時間の経過と共に問題が追加されてゆく形式なのであろう。
 
 とりあえず問題には「FLAGページ」と書かれた\url{http://10.2.0.3/FLAG}というURL、
 そして「キーワード」という入力フォームが用意されている。
@@ -8,29 +10,49 @@
 
 何も書かれていない白紙ファイル。
 なるほど、何かの手段を用いてここにチームごとに定められた「フラッグワード」を書き込めば得点になるのだろう。
-で、問題はどれだ。
+フラッグワードは指定のページで公開されており、
+\ctt{c886eeb9dcd32}……というハッシュ値を連想させるような、
+全部で64桁の文字列となっている。
+我々は\urandomだが、
+他チームに割り当てられたフラッグワードも合わせて公開されているようだ。
+まあ、他チームのフラッグワードを書き込む意味などなかろうから、
+別にこれはどうでもいい。
+
+で、解くべき問題はどれだ。
 とりあえず、\url{http://10.2.0.3/}へアクセスしてみると、
 ドキュメントルートに置かれたファイルが見える。
 
-\dirtree{%
-	.1 /.
-	.2 eng.txt.
-	.2 jpn.txt.
-	.2 stage1.cgi.
-	.2 stage2/.
-}
+\begin{itembox}[c]{\textbf{Index of /}}
+\small
+\begin{table}[H]
+	\footnotesize
+	\begin{tabular}{lcrl}
+		\hfill Name & Last modified & Size & Description \\
+		\hline
+		eng.txt & 12-Feb-2013 16:39 & 16 \\
+		jpn.txt & 12-Feb-2013 17:10 & 31 \\
+		stage2/ & 12-Feb-2013 17:49 & -  \\
+		stage1.cgi & 12-Feb-2013 17:23 & 834 \\
+		\hline
+	\end{tabular}
+\end{table}
+\textit{Apache/2.2.15 (CentOS) Server at localhost Port 80}
+\end{itembox}
 
-という構成が露呈している。
+Apacheのファイル一覧が露呈している。
 とりあえず、\ctt{stage2}というフォルダを覗いてみるか。
 \url{http://10.2.0.3/stage2/}へアクセスすると、BASIC認証が出現した。
-なるほど、このBASIC認証を突破するために、脆弱性があるであろう\ctt{stage1.cgi}を用いるということだろう。
+なるほどこのBASIC認証を突破するために、
+脆弱性があるであろう\ctt{stage1.cgi}を用いるということだろう。
 
 \url{http://10.2.0.3/stage1.cgi}へアクセスすると、日本語と英語が切り替えられるだけのページが出現した。
 
 \lstinputlisting[style=html]{src/2/stage1.cgi.html}
 
-試しに英語へ切り替えると、\url{http://10.2.0.3/stage1.cgi?lang=eng}というアドレスへアクセスした。
-なるほど、\ctt{lang}クエリでファイル名を渡しているだけ。
+試しに英語へ切り替えると、
+JavaScriptか何かが走り自動的に
+\url{http://10.2.0.3/stage1.cgi?lang=eng}というアドレスへ移動した。
+つまり\ctt{lang}クエリでファイル名を渡しているだけの、
 典型的なディレクトリトラバーサルの問題だ。
 \url{http://10.2.0.3/stage1.cgi?lang=./stage2/.htpasswd}でOK。
 
@@ -60,6 +82,16 @@ File not found. [./stage2/.htpasswd.txt]
 確かにこいつはどう見てもハッシュ値、復号化は無理。
 となれば、John The Ripperということになるが……。
 こんなことしている時間なんてあるのか？
+
+そんなことをしている間にサイレン音が会場に響く。
+このサイレンは、つくば大会同様、
+どこかのチームが得点する度に鳴る仕組みになっているらしい。
+また大会側が用意している「スコアサーバー」へアクセスすれば、
+どのチームがどの問題をクリアしているか、
+そしてどのチームが現在何ポイント所持しているのかという情報が手に入るようになっている。
+どこのチームが得点したのか知らないが、
+こんなに早くも解決しているところを鑑みるに到底John The Ripperとは思えない。
+
 とりあえず、このハッシュ値をGoogleで調べてみよう。
 あわよくば出てくるかもしれない。
 一旦大会用の回線を切断し、携帯電話を使ってインターネットに接続する。
@@ -85,6 +117,8 @@ File not found. [./stage2/.htpasswd.txt]
 \end{screen}
 
 と表示されたページが現れる。
+なるほど、これがコミットすべきキーワードか。
+まあ、これのコミットは既におーぴーか誰かがやったのだろう。
 そしてページ中央には検索フォームと謎の表。
 
 \begin{table}[H]
@@ -118,9 +152,10 @@ File not found. [./stage2/.htpasswd.txt]
 \lstinputlisting[style=html]{src/2/stage3.html}
 
 キーワードは\textit{IamSQLInjectionMaster}らしい。
-まあ、次は画像のアップローダーと思しきプログラムだ。
+これも既におーぴーがコミットしたようだ。
+次は画像のアップローダーと思しきプログラムだ。
 
-手始めにデスクトップに置いてあった\ctt{latex.ltx}をアップロードしてみよう。
+手始めにデスクトップに置いてあった\ctt{latex.ltx}をアップロードしてみるか。
 
 \begin{screen}
 \centering
@@ -191,12 +226,13 @@ uid=502(stage4) gid=502(stage4) groups=502(stage4),0(root) uid=502(stage4) gid=5
 よし、俺は\ctt{stage4}だ。
 ならば、
 
-「おーぴー、\ctt{id}が\ctt{stage4}だ。\ctt{authorized\_keys}を」
+「おーぴー、\ctt{id}が\ctt{stage4}だ。\ctt{authorized\_keys}を------」
 
-そこまで言ったところで全てを察したおーぴーは、直ちに作業に戻った。
+そこまで言ったところで全てを察したおーぴーは直ちに作業に戻った。
 ならば俺も作業開始だ。
-\ctt{id}が\ctt{stage4}であるならば、\ctt{stage4}の\ctt{authorized\_keys}に俺の公開鍵を書き込めば、
-そのまま\url{stage4@10.2.0.3}へSSHでログイン出来る可能性が高い。
+\ctt{id}が\ctt{stage4}であるということは、
+\ctt{stage4}の\ctt{authorized\_keys}に俺の公開鍵を書き込めばそのまま\url{stage4@10.2.0.3}へSSHでログイン出来る可能性が高い。
+
 まずは適当な鍵を生成せねば……。
 \ctt{ssh-keygen}だ。
 
