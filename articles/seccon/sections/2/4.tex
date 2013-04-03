@@ -36,7 +36,7 @@
 から選ぶ形になっている。
 
 とりあえず、全てを適当に入力して送信する。
-10秒か20秒くらい経ってから、次のようなページがやってくる。
+10秒か20秒くらい経ってから、次のようなページがやって来た。
 
 \begin{itembox}[c]{\textbf{Message Content:}}
 Sent Your Comment. ThankYou!
@@ -50,7 +50,7 @@ Sent Your Comment. ThankYou!
 
 まあ、これは疑いの余地なくメールの送信フォームだろう。
 ページ遷移に死ぬ程時間がかかっていたのは、
-恐らく\ctt{sendmail}か何かの外部プログラムを使ったためだろう。
+恐らく\ctt{sendmail}か何かの外部プログラムを使ったからに違いない。
 となると、\Marsはまず間違いなくOSコマンドインジェクションか、メールヘッダ汚染の二者択一。
 とりあえず、送信フォームのソースを調べるか。
 
@@ -77,7 +77,7 @@ Sent Your Comment. ThankYou!
 
 \lstinputlisting[style=perl]{src/2/mes_guess1.cgi}
 
-\ctt{mail\_to}クエリに何か、例えば次のようなものを差し込むのが
+そして\ctt{mail\_to}クエリに何か、例えば次のようなものを差し込むのが
 OSコマンドインジェクションだ。
 
 \begin{lstlisting}
