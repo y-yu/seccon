@@ -1,8 +1,7 @@
 運営の注意などが終わり、競技は開始された。
-
 俺は直ちに問題サーバーへとアクセスする。
 問題は\Mercuryというものが一問のみ。
-まあ、従来と同じように時間の経過と共に問題が追加されてゆく形式なのであろう。
+まあ従来通り、時間の経過と共に問題が追加されて行く形式なのであろう。
 
 とりあえず問題には「FLAGページ」と書かれた\url{http://10.2.0.3/FLAG}というURL、
 そして「キーワード」という入力フォームが用意されている。
@@ -12,8 +11,7 @@
 なるほど、何かの手段を用いてここへチームごとに定められた「フラッグワード」を書き込めば得点になるのだろう。
 フラッグワードは指定のページで公開されており、
 \ctt{c886eeb9dcd32}……というハッシュ値を連想させるような、
-全部で64桁の文字列となっている。
-我々は\urandomだが、
+全部で64字の文字列となっている。
 他チームに割り当てられたフラッグワードも合わせて公開されているようだ。
 まあ他チームのフラッグワードを書き込む意味などなかろうから、
 別にこれはどうでもいい。
@@ -43,7 +41,7 @@ Apacheのファイル一覧が露呈している。
 とりあえず、\ctt{stage2}というフォルダを覗いてみるか。
 \url{http://10.2.0.3/stage2/}へアクセスすると、BASIC認証が出現した。
 なるほどこのBASIC認証を突破するために、
-脆弱性があるであろう\ctt{stage1.cgi}を用いるということだろう。
+脆弱性があるであろう\ctt{stage1.cgi}を用いよということだろう。
 
 \url{http://10.2.0.3/stage1.cgi}へアクセスすると、日本語と英語が切り替えられるだけのページが出現した。
 
@@ -53,14 +51,14 @@ Apacheのファイル一覧が露呈している。
 JavaScriptか何かが走り自動的に
 \url{http://10.2.0.3/stage1.cgi?lang=eng}というアドレスへ移動した。
 つまり\ctt{lang}クエリでファイル名を渡しているだけの、
-典型的なディレクトリトラバーサルの問題だ。
+典型的なディレクトリトラバーサルだ。
 \url{http://10.2.0.3/stage1.cgi?lang=./stage2/.htpasswd}でOK。
 
 \begin{lstlisting}
 File not found. [./stage2/.htpasswd.txt]
 \end{lstlisting}
 
-くそ、尻に\ctt{.txt}を付与するタイプか。
+くそ、尻に拡張子\ctt{.txt}を付与するタイプか。
 ならばヌルバイト攻撃だろう。
 \url{http://10.2.0.3/stage1.cgi?lang=./stage2/.htpasswd%00}でよい。
 
@@ -76,9 +74,9 @@ File not found. [./stage2/.htpasswd.txt]
 おーぴーの画面にも、同じ文字列が表示された。
 さて、ここからどうしたものか。
 
-「John The Ripper\footnote{総当たりと辞書攻撃によるパスワードクラックツール。}を使おう」
+「John The Ripper\footnote{総当たりと辞書攻撃によるパスワードクラックツールのこと。}を使おう」
 
-は？Joho The Ripperだと？
+は？John The Ripperだと？
 確かにこいつはどう見てもハッシュ値、復号化は無理。
 となれば、John The Ripperということになるが……。
 こんなことしている時間なんてあるのか？
@@ -91,7 +89,7 @@ File not found. [./stage2/.htpasswd.txt]
 そしてどのチームが現在何ポイント所持しているのかという情報が手に入るようになっている。
 
 スコアを確認していないのでどこのチームが得点したのか知らないが、
-こんなに早くも解決しているところを鑑みるに到底John The Ripperとは思えない。
+こんなに早くも解決しているところを鑑みるに到底John The Ripperを使うとは思えない。
 
 とりあえず、このハッシュ値をGoogleで調べてみよう。
 あわよくば出てくるかもしれない。
@@ -133,7 +131,7 @@ File not found. [./stage2/.htpasswd.txt]
 	\end{tabular}
 \end{table}
 
-ああ、これは明らかにSOLインジェクションだ。
+ああ、これは明らかにSQLインジェクションだ。
 つくば大会と同様に\ctt{UNION}を流すタイプ。
 テーブル名は……そうだ、さっきの\ctt{stage1.cgi}を使えばソースが見える。
 
@@ -154,7 +152,7 @@ File not found. [./stage2/.htpasswd.txt]
 
 キーワードは\textit{IamSQLInjectionMaster}らしい。
 これも既におーぴーがコミットしたようだ。
-次は画像のアップローダーと思しきプログラムだ。
+次は画像のアップローダーと思しきプログラム。
 
 手始めにデスクトップに置いてあった\ctt{latex.ltx}をアップロードしてみるか。
 
@@ -167,7 +165,7 @@ latex.ltxをアップロードしました。
 \url{http://10.2.0.3/stage3xYz/images/latex.ltx}というURLでアップロードされてしまった。
 よし、ファイル名もそのままらしいな。
 
-ということで、直ちにスクリプトを書く。
+ということでスクリプトを書く。
 
 \lstinputlisting[style=php]{src/2/attack.php}
 
@@ -218,7 +216,7 @@ stage3xYz
 
 \lstinputlisting[xleftmargin=1pt, basicstyle=\fontsize{6pt}{15pt}\tt]{src/2/lsDocRoot.txt}
 
-なるほど、\ctt{stage5}になれば\ctt{FLAG}に書けるってわけか。
+なるほど、\ctt{stage5}になればFLAGに書けるってわけか。
 
 しかし先ほどのヒント、「Use\_SSH」とはどういうことなのだろうか。
 SSHでログインするにしても、ユーザー名も分からぬこの状況ではどうしようもない……。
@@ -302,23 +300,23 @@ $ perl -MURI::Escape -E 'say uri_escape("+")'
 \end{lstlisting}
 
 どうやら\ctt{+}は\ctt{\%2B}であると分った。
-後はさっきの\ctt{id\_rsa.gomi.pub}の\ctt{+}を\ctt{\%2B}へ置換したものを流し込めばよい。
+後は\ctt{id\_rsa.gomi.pub}の\ctt{+}を\ctt{\%2B}へ置換したものを流し込めばよい。
 この程度の置換であれば、Vimの機能で一撃だ。
+すぐさま置換したものを\ctt{authorized\_keys}へ書き込む。
 
-\end{multicols}
+%\end{multicols}
+%
+%\begin{lstlisting}
+%http://10.2.0.3/stage3xYz/images/gomi.php?cmd=echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBQ/02G
+%1jx0M6Fw7ybYhKuMNlDrG/6sFyifFWO%2BXdmowzSj%2BL4Ip4LpZer1xCINJWJpcGGeIy1JqcoXDagA70yqWWO9qcstCdSKI
+%lhCBxD78VBS6%2BftvHXpmM7818npSKGy0yeKaajNIEYQYKUGVYVDcLKWEFXY2utDd2wV3M2BRsEZZyu7jlBOqtfEeQbou3so
+%36lIipM4FAWaZGzcNtnN40xfQLG1twuDTvxYINqTwbezRueYQXghIWTrD3fyWEDH86BsaQ6oN68XD0sscHuI4IC3/R19afZKi
+%ti8mHqwmC5JODpZ2McUGzwZIqm55c/h83YP1izckJqaKW7pg9V yoshimura_yuu@yoshimura-yuu.local" >> 
+%/home/stage4/.ssh/authorized_keys
+%\end{lstlisting}
+%
+%\begin{multicols}{2}
 
-\begin{lstlisting}
-http://10.2.0.3/stage3xYz/images/gomi.php?cmd=echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBQ/02G
-1jx0M6Fw7ybYhKuMNlDrG/6sFyifFWO%2BXdmowzSj%2BL4Ip4LpZer1xCINJWJpcGGeIy1JqcoXDagA70yqWWO9qcstCdSKI
-lhCBxD78VBS6%2BftvHXpmM7818npSKGy0yeKaajNIEYQYKUGVYVDcLKWEFXY2utDd2wV3M2BRsEZZyu7jlBOqtfEeQbou3so
-36lIipM4FAWaZGzcNtnN40xfQLG1twuDTvxYINqTwbezRueYQXghIWTrD3fyWEDH86BsaQ6oN68XD0sscHuI4IC3/R19afZKi
-ti8mHqwmC5JODpZ2McUGzwZIqm55c/h83YP1izckJqaKW7pg9V yoshimura_yuu@yoshimura-yuu.local" >> 
-/home/stage4/.ssh/authorized_keys
-\end{lstlisting}
-
-\begin{multicols}{2}
-
-でいいはずだ。
 そして二回目の、
 
 \begin{lstlisting}
@@ -344,14 +342,14 @@ Stage4 Keyword: IcouldLoginWithSSHd
 「Fiddler\footnote{プロクシのように振る舞うWebデバッガー。}を使った」
 
 なるほど。
-俺みたいに文字列を直接アドレスバーに入力するような古典的手法はもうダメってことだな。
+俺みたいに文字列を直接アドレスバーへ入力するような古典的手法はもうダメってことだな。
 まあともかく、これで俺もサーバーの住人だ。
 
 しかし、SSHでログインしているのは俺とおーぴーだけ。
 チームの全員でこのサーバーを調べた方が良いだろう。
 とりあえず、他のメンバーに手早く\ctt{gomi.php}の使い方を説明した。
 
-まあ、事前にCOINSの環境でこの話はしたことがある。
+まあ、事前にCOINSの環境でこの話をしたことがある。
 COINSの環境はPHPが\ctt{\_www}の権限で動いているので、
 PHPから、つまりはApacheから参照出来る情報は全て他のユーザーが取得出来る。
 故に、PHPがデータベースにアクセスするための情報や、
@@ -366,7 +364,7 @@ Apacheの設定ファイルである\ctt{.htpasswd}なども閲覧出来る。
 どういうことだ？
 とにかく調べてみるか。
 ドキュメントルートはどこだか不明だが、
-まあ恐らく\ctt{/var/www/}の下の何処か。
+まあ恐らく\ctt{/var/www/}の下のどこか。
 ここで\ctt{ls}を発砲。
 
 \begin{lstlisting}
@@ -414,7 +412,7 @@ index.html
 当然敵チームが公開鍵を\ctt{authorized\_keys}へ書き込むのは困難になるはず。
 だからひたすら\ctt{rm -rf *}を連打だ。
 これで俺の置いた\ctt{gomi.php}も破滅したが、もはやあんなものは必要ない。
-少くとも俺とおーぴーの公開鍵が\ctt{authorized\_keys}に登録されている以上、
+少なくとも俺とおーぴーの公開鍵が\ctt{authorized\_keys}に登録されている以上、
 我々が残りメンバーの公開鍵をUSBメモリか何かで受け取り、書き込めばよい。
 
 とりあえず、おしろの公開鍵を登録せねば。
@@ -438,7 +436,7 @@ HZ41AoNUbHf7PKznv2cwSWP5z5MIfVvvoZsRmtxbVG4UEN0pA578uo8rIRq87z6MZ8LQ7usXweUsGuZr
 \begin{multicols}{2}
 
 他のメンバーの公開鍵はおーぴーが処理したらしい。
-俺はめいすから削除する役割を代ってもらい、
+俺はめいすから削除する役割を代わってもらい、
 めいすにはこの作業をシェルスクリプトか何かで自動化してもらうことにした。
 そして残りのメンバーはFLAGへの書き込みを模索する。
 

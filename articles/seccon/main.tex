@@ -7,6 +7,7 @@
 \usepackage{fancybox}
 \usepackage{layouts}
 \usepackage{enumerate}
+\usepackage{enumitem}
 \usepackage{float}
 \usepackage{vruler}
 \usepackage{multicol}
@@ -131,13 +132,17 @@
 
 \begin{center}
 \shadowbox{\small%
-	特に脚注がなければ、
-	この記事に登場する人物、団体名、企画などは実在するものです。
+\begin{tabular}{l}
+SECCON CTF 全国大会の開催、
+運営に尽力して下さったSECCON実行委員をはじめとする皆様に感謝いたします。\\
+
+またこの記事を書くにあたり、問題の掲載許可及び問題の資料を下さった
+問題作成者の皆様に感謝申し上げます。
+\end{tabular}
 }
 \end{center}
 
-%\begin{ruler}
+
 \input{./body.tex}
-%\end{ruler}
 
 \end{document}
