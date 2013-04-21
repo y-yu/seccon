@@ -105,7 +105,7 @@ hoge@hoge.jp; ls
 \end{lstlisting}
 
 となっている。
-この不気味にコメントアウトされた\ctt{Maintainance}というのが気になるが、
+この不気味にコメントアウトされた\ruby{\ctt{Maintainance}}{〔原文ママ〕}というのが気になるが、
 それよりも問題なのはこいつらの\ctt{value}だ。
 コメントアウトされた\ctt{Maintainance}も含めて列挙するとこうなる。
 
@@ -120,6 +120,8 @@ hoge@hoge.jp; ls
 どいつもこいつもメールアドレスには見えない故、
 これは内部にテーブルか何かを持っていると考えるのが妥当だ。
 つまり\ctt{message.cgi}は、
+
+\columnbreak
 
 \lstinputlisting[style=perl, firstnumber=6]{src/2/mes_guess2.cgi}
 

